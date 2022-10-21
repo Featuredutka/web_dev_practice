@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import RegForm from './RegForm';
 
 
 function LoginForm({Login, error}) {
@@ -34,7 +35,8 @@ function LoginForm({Login, error}) {
                 
                 <div>
                     <input type="submit" value="LOG IN"/>
-                    <a className='redirect' href="http://localhost:3000/register" to="/register">I don't have an account</a>
+                    <a className='redirect' href="http://127.0.0.1:8000/register" to="/register">I don't have an account</a>
+                    {/* <button type='test' color="red" onClick={SwitchView} text="Call Component"/>  */}
                     </div>
             </div>
         </form>

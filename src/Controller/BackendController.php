@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class BackendController extends AbstractController
 {
-    #[Route('/backend', name: 'app_backend')]
+    #[Route('/register', name: 'app_backend')]
     public function index(): Response
     {
         return $this->render('backend/index.html.twig');

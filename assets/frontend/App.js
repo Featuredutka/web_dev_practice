@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, setState} from "react";
 import LoginForm from "./components/LoginForm";
 import RegForm from "./components/RegForm";
 import Home from "./components/Home";
@@ -56,27 +56,50 @@ function App() {
 
   }
 
+  const [isShown, setIsShown] = useState(false);
+
+  const handleClick = event => {
+    // 👇️ toggle shown state
+    setIsShown(current => !current);
+
+    // 👇️ or simply set it to true
+    // setIsShown(true);
+  };
+
   return (
-    <Router>
-    {/* <h1>Homepage</h1>
-    <div className="App">
-      
-      
-    </div> */}
+    <React.Fragment>
+      <button onClick={handleClick}>Click</button>
+      {(isShown ? (
+          (user.email !== "" ? (
+            window.location.href = "/"
+          ) : (
+            <LoginForm Login={Login} error={error}  />
+          )
+        )
+      ) : (
+        <RegForm />
+      )
+      )}
+{/* 
+      {(user.email !== "" ? (
+          window.location.href = "/"
+        ) : (
+          <LoginForm Login={Login} error={error}  />
+        )
+      )} */}
+
+    {/* </React.Fragment>
     <Routes>
     <Route path="/" element={<Home />}/>
     <Route path="/frontend" 
-    element={(user.email !== "" ? (
-          window.location.href = "/"
-      ) : (
-          <LoginForm Login={Login} error={error}  />
-      )
-      )}/>
+    element=/>
     <Route path="/register"
      element={<RegForm Register={Register} error={error}  />}/>
     <Route path="*" element={<Error />}/>
     </Routes>
-    </Router>
+    </Router> */}
+
+     </React.Fragment>
   );
 }
 

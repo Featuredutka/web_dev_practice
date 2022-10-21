@@ -21,7 +21,7 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry("frontend", './assets/frontend/index.js')
-    .addEntry("backend", './assets/backend/index.js')
+    .addEntry("register", './assets/frontend/index.js')
 
     
     // .addEntry("login", './assets/frontend/components/LoginForm.js')
