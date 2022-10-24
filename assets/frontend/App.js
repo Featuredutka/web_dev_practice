@@ -21,105 +21,55 @@ function App() {
 
   const [user, setUser] = useState({name: "", email: ""});
   const [error, setError] = useState("");
-  const [confirmation, setConfirmation] = useState(0);
-
+  const [isShown, setIsShown] = useState(false);
   
-
-  // function readDB(){
-  //   let test = axios.get('api/database/read')
-  //   .then(response => {
-  //     console.log('success');
-  //     return response.data;
-  //   }).catch( error => {
-  //     console.log(error);
-  //   })
-  //   return test;
-  // }
 
   const Login = details => {
 
-    // console.log(details);
-
-    // let database = new Object;
-
-    // database = readDB();
-
-    // database.then((v) => {
-    //   console.log(
-    //     // v[0].id
-    //     v.find(x => x.name === details.email).id
-    //     );
-    // });
-
-    // database.then((v) => {
-    //   let tmp_confirmation = v.find(x => x.name === details.email).id;
-    //   // console.log(tmp_confirmation);
-    //   setConfirmation(tmp_confirmation);
-    // });
-
-    // useEffect(() => {
-    //   console.log(confirmation); 
-    // });
-
     axios.get('api/database/read')
     .then(response => {
-
-      // console.log(response);
-      let fetched_password = response.data.find(x => x.email === details.email).password;
-      // console.log(tmp_confirmation);
-      // setConfirmation(tmp_confirmation);
-
-      if ((details.email === adminUser.email && details.password === adminUser.password) || (bcryptjs.compareSync(details.password, fetched_password))){
-        console.log("LOGGED IN SUCCESSFULLY");
-        setUser({
-          name: details.name,
-          email: details.email
-        });
-      } else {
-        console.log("CREDENTIALS ARE NOT CORRECT");
-        setError("Credentials do not match");
+      try{
+        let fetched_password = response.data.find(x => x.email === details.email).password;
+        if ((details.email === adminUser.email && details.password === adminUser.password) || (bcryptjs.compareSync(details.password, fetched_password))){
+          setUser({
+            name: details.name,
+            email: details.email
+          });
+        } else {
+          setError("Credentials do not match");
+        }
+      } catch (exception){
+          setError("User not found");
       }
     })
     .catch( error => {
       console.log(error);
     })
-
-    // if (confirmation != 0){
-    //   console.log(confirmation);
-    // } else {
-    //   console.log('empty');
-    // }
-    
-    // if (details.email === adminUser.email && details.password === adminUser.password){
-    //   console.log("LOGGED IN SUCCESSFULLY");
-    //   setUser({
-    //     name: details.name,
-    //     email: details.email
-    //   });
-    // } else {
-    //   console.log("CREDENTIALS ARE NOT CORRECT");
-    //   setError("Credentials do not match");
-    // }
-  } 
-
+  }
+ 
   const Register = details => {
-  
-    console.log(details);
 
-    const salt = bcryptjs.genSaltSync(saltRounds);
-    const hash = bcryptjs.hashSync(details.password, salt);
-    details.password = hash;
+    if (details.name.length === 0 || details.email.length === 0 || details.password.length === 0){
+      setError("Please fill all fields")
+    } else {
+      
+      if (details.password.length < 6){
+        setError("Password should contain at least 6 characters");
+      } else {
+        setError("");
+        const salt = bcryptjs.genSaltSync(saltRounds);
+        const hash = bcryptjs.hashSync(details.password, salt);
+        details.password = hash;
 
-    
-
-    // SENDING DATA INTO THE DATABASE -> THE LAST STEP
-    axios.post('api/database/create', details)
-    .then(response => {
-      console.log(response.data);
-    })
-    .catch( error => {
-      console.log(error);
-    })
+        // SENDING DATA INTO THE DATABASE -> THE LAST STEP
+        axios.post('api/database/create', details)
+        .then(response => {
+        })
+        .catch( error => {
+          console.log(error);
+        })
+      }
+    }
   } 
 
   const Logout = () => {
@@ -127,12 +77,10 @@ function App() {
 
   }
 
-  const [isShown, setIsShown] = useState(false);
-
   const handleClick = event => {
     setIsShown(current => !current);
+    setError("");
   };
-
 
   return (
     <React.Fragment>
@@ -148,25 +96,6 @@ function App() {
         <RegForm Register={Register} error={error} />
       )
       )}
-{/* 
-      {(user.email !== "" ? (
-          window.location.href = "/"
-        ) : (
-          <LoginForm Login={Login} error={error}  />
-        )
-      )} */}
-
-    {/* </React.Fragment>
-    <Routes>
-    <Route path="/" element={<Home />}/>
-    <Route path="/frontend" 
-    element=/>
-    <Route path="/register"
-     element={<RegForm Register={Register} error={error}  />}/>
-    <Route path="*" element={<Error />}/>
-    </Routes>
-    </Router> */}
-
      </React.Fragment>
   );
 }
