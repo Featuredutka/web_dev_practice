@@ -4,6 +4,7 @@ import RegForm from "./components/RegForm";
 import Home from "./components/Home";
 import Error from "./components/Error";
 import axios from "axios"
+import bcryptjs from "bcryptjs"
 
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
 
@@ -16,10 +17,13 @@ function App() {
     password:"password"
   }
 
+  const saltRounds = 10;
+
   const [user, setUser] = useState({name: "", email: ""});
   const [error, setError] = useState("");
   const [confirmation, setConfirmation] = useState(0);
 
+  
 
   // function readDB(){
   //   let test = axios.get('api/database/read')
@@ -60,12 +64,12 @@ function App() {
     axios.get('api/database/read')
     .then(response => {
 
-      console.log('success');
-      let tmp_confirmation = response.data.find(x => x.name === details.email).id;
+      // console.log(response);
+      let fetched_password = response.data.find(x => x.email === details.email).password;
       // console.log(tmp_confirmation);
       // setConfirmation(tmp_confirmation);
 
-      if ((details.email === adminUser.email && details.password === adminUser.password) || (details.password == tmp_confirmation)){
+      if ((details.email === adminUser.email && details.password === adminUser.password) || (bcryptjs.compareSync(details.password, fetched_password))){
         console.log("LOGGED IN SUCCESSFULLY");
         setUser({
           name: details.name,
@@ -99,7 +103,16 @@ function App() {
   } 
 
   const Register = details => {
+  
     console.log(details);
+
+    const salt = bcryptjs.genSaltSync(saltRounds);
+    const hash = bcryptjs.hashSync(details.password, salt);
+    details.password = hash;
+
+    
+
+    // SENDING DATA INTO THE DATABASE -> THE LAST STEP
     axios.post('api/database/create', details)
     .then(response => {
       console.log(response.data);
@@ -107,20 +120,6 @@ function App() {
     .catch( error => {
       console.log(error);
     })
-    // regUser({
-    //   name: details.name, 
-    //   email: details.email,
-    //   password: details.password})
-
-    // plainUser.name = details.name;
-    // plainUser.email = details.email;
-    // plainUser.password = details.password;
-    // console.log(plainUser);
-    // setUser({
-    //   name: details.name,
-    //   email: details.email,
-    //   password: details.password
-    // });
   } 
 
   const Logout = () => {
@@ -131,11 +130,7 @@ function App() {
   const [isShown, setIsShown] = useState(false);
 
   const handleClick = event => {
-    // 👇️ toggle shown state
     setIsShown(current => !current);
-
-    // 👇️ or simply set it to true
-    // setIsShown(true);
   };
 
 

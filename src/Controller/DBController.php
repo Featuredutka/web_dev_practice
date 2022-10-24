@@ -44,7 +44,9 @@ class DBController extends AbstractController
       $content = json_decode($request->getContent());
     //   echo $content->name;
       $user = new User();
-      $user->setName($content->email);
+      $user->setName($content->name);
+      $user->setEmail($content->email);
+      $user->setPassword($content->password);
       try {
         $this->entityManager->persist($user);
         $this->entityManager->flush();
