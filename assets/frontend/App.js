@@ -21,16 +21,16 @@ function App() {
   const [confirmation, setConfirmation] = useState(0);
 
 
-  function readDB(){
-    let test = axios.get('api/database/read')
-    .then(response => {
-      console.log('success');
-      return response.data;
-    }).catch( error => {
-      console.log(error);
-    })
-    return test;
-  }
+  // function readDB(){
+  //   let test = axios.get('api/database/read')
+  //   .then(response => {
+  //     console.log('success');
+  //     return response.data;
+  //   }).catch( error => {
+  //     console.log(error);
+  //   })
+  //   return test;
+  // }
 
   const Login = details => {
 
@@ -47,7 +47,6 @@ function App() {
     //     );
     // });
 
-    
     // database.then((v) => {
     //   let tmp_confirmation = v.find(x => x.name === details.email).id;
     //   // console.log(tmp_confirmation);
@@ -63,49 +62,51 @@ function App() {
 
       console.log('success');
       let tmp_confirmation = response.data.find(x => x.name === details.email).id;
-      console.log(tmp_confirmation);
-      setConfirmation(tmp_confirmation);
+      // console.log(tmp_confirmation);
+      // setConfirmation(tmp_confirmation);
 
-      // if ((details.email === adminUser.email && details.password === adminUser.password) || (details.password == confirmation)){
-      //   console.log("LOGGED IN SUCCESSFULLY");
-      //   setUser({
-      //     name: details.name,
-      //     email: details.email
-      //   });
-      // } else {
-      //   console.log("CREDENTIALS ARE NOT CORRECT");
-      //   console.log(details.password)
-      //   console.log()
-      //   console.log(details.password == confirmation)
-      //   setError("Credentials do not match");
-      // }
-
-    }).catch( error => {
-
+      if ((details.email === adminUser.email && details.password === adminUser.password) || (details.password == tmp_confirmation)){
+        console.log("LOGGED IN SUCCESSFULLY");
+        setUser({
+          name: details.name,
+          email: details.email
+        });
+      } else {
+        console.log("CREDENTIALS ARE NOT CORRECT");
+        setError("Credentials do not match");
+      }
+    })
+    .catch( error => {
       console.log(error);
-
     })
 
-    if (confirmation != 0){
-      console.log(confirmation);
-    } else {
-      console.log('empty');
-    }
+    // if (confirmation != 0){
+    //   console.log(confirmation);
+    // } else {
+    //   console.log('empty');
+    // }
     
-    if (details.email === adminUser.email && details.password === adminUser.password){
-      console.log("LOGGED IN SUCCESSFULLY");
-      setUser({
-        name: details.name,
-        email: details.email
-      });
-    } else {
-      console.log("CREDENTIALS ARE NOT CORRECT");
-      setError("Credentials do not match");
-    }
+    // if (details.email === adminUser.email && details.password === adminUser.password){
+    //   console.log("LOGGED IN SUCCESSFULLY");
+    //   setUser({
+    //     name: details.name,
+    //     email: details.email
+    //   });
+    // } else {
+    //   console.log("CREDENTIALS ARE NOT CORRECT");
+    //   setError("Credentials do not match");
+    // }
   } 
 
   const Register = details => {
     console.log(details);
+    axios.post('api/database/create', details)
+    .then(response => {
+      console.log(response.data);
+    })
+    .catch( error => {
+      console.log(error);
+    })
     // regUser({
     //   name: details.name, 
     //   email: details.email,
@@ -149,7 +150,7 @@ function App() {
           )
         )
       ) : (
-        <RegForm />
+        <RegForm Register={Register} error={error} />
       )
       )}
 {/* 

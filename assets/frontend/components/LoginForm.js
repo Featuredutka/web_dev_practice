@@ -1,6 +1,4 @@
 import React, {useState} from 'react'
-import RegForm from './RegForm';
-
 
 function LoginForm({Login, error}) {
     const [details, setDetails] = useState({name: "", email: "", password:""});

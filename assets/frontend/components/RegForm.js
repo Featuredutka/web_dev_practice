@@ -39,7 +39,7 @@ function RegForm({Register, error}) {
                         onChange={e => setDetails({...details, password: e.target.value})} 
                         value={details.password}/>
                 </div>
-                {(error !== "") ? (<div className='error'>{error}</div>) : ""}
+                {(error !== "") ? (<div className='error'>{error}</div>) : ""} 
                 <input type="submit" value="SIGN UP"/>
                 <a className='redirect-password' href="http://localhost:3000/login" to="/register">I have an account</a>
             </div>
