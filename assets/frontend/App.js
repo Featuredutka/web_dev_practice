@@ -1,7 +1,6 @@
 import React, {useState, setState, useEffect} from "react";
 import LoginForm from "./components/LoginForm";
 import RegForm from "./components/RegForm";
-import Home from "./components/Home";
 import Error from "./components/Error";
 import axios from "axios"
 import bcryptjs from "bcryptjs"
@@ -64,6 +63,10 @@ function App() {
         // SENDING DATA INTO THE DATABASE -> THE LAST STEP
         axios.post('api/database/create', details)
         .then(response => {
+          console.log(response);
+          if (response.data.slice(0,12) === "PDOException"){
+            setError("This email is already registered");
+          }
         })
         .catch( error => {
           console.log(error);
@@ -84,7 +87,7 @@ function App() {
 
   return (
     <React.Fragment>
-      <button onClick={handleClick}>Click</button>
+      <button className='redirect' onClick={handleClick}>Click</button>
       {(isShown ? (
           (user.email !== "" ? (
             window.location.href = "/"

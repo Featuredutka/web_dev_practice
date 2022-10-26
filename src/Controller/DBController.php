@@ -50,14 +50,11 @@ class DBController extends AbstractController
       try {
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-        return $this->json([
-            'user' => $user->toArray(),
-        ]);
+        return new Response(200);
 
       } catch (Exception $exception) {
-        // return $this->json([
-        //     'user' => $user->toArray(),
-        // ]);
+        echo $exception;
+        return $exception;
       }
     //   return new Response($content->name);
     }
