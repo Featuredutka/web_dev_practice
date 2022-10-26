@@ -1,10 +1,19 @@
 import React, {useState} from 'react'
 
-function LoginForm({Login, error}) {
+
+function LoginForm({Login, handleClick, toggleRestore, error}) {
     const [details, setDetails] = useState({name: "", email: "", password:""});
     const submitHandler = e => {
         e.preventDefault();
         Login(details);
+    }
+    const registerredirect = e =>{
+        e.preventDefault();
+        handleClick();
+    }
+    const restoreredirect = e =>{
+        e.preventDefault();
+        toggleRestore();
     }
   return (
     <div className="App">
@@ -33,8 +42,10 @@ function LoginForm({Login, error}) {
                 
                 <div>
                     <input type="submit" value="LOG IN"/>
-                    <a className='redirect' href="http://127.0.0.1:8000/register" to="/register">I don't have an account</a>
-                    {/* <button type='test' color="red" onClick={SwitchView} text="Call Component"/>  */}
+                    {/* <input type="reset" value="I don't have an account"/> */}
+                    <a className='redirect' onClick={registerredirect}>I don't have an account</a>
+                    <a className='redirect-restore' onClick={restoreredirect}>I forgot my password</a>
+                    {/* <button type='test' color="red" onClick={toggleViewRestore} text="Call Component"/>  */}
                     </div>
             </div>
         </form>

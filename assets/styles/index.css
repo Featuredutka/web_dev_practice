@@ -151,8 +151,20 @@ form .form-inner input[type="submit"] {
   cursor: pointer;
 }
 
+form .form-inner a[class="redirect-restore"] {
+  padding: auto;
+  transition: 0.4s;
+  color: #666;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-left: 60px;
+  display:block;
+  text-decoration-line: underline;
+}
+/* BULLSHIT PART
+
 button[class="redirect"] {
-  /* display: inline-block; */
+  display: inline-block;
   padding: 10px 15px;
   border-radius: 8px;
   background-size: 100%;
@@ -161,4 +173,5 @@ button[class="redirect"] {
   color: #666;
   cursor: pointer;
   margin-left: 10px;
-}
+} */
+

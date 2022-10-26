@@ -1,10 +1,14 @@
 import React, {useState} from 'react'
 
-function Restoration({Restore, error}) {
+function Restoration({Restore, toggleRestore, error}) {
     const [details, setDetails] = useState({email: "", confirm_password: "", password:""});
     const submitHandler = e => {
         e.preventDefault();
         Restore(details);
+    }
+    const loginredirect = e =>{
+        e.preventDefault();
+        toggleRestore();
     }
   return (
     <div className="App">
@@ -40,7 +44,8 @@ function Restoration({Restore, error}) {
                 </div>
                 {(error !== "") ? (<div className='error'>{error}</div>) : ""} 
                 <input type="submit" value="UPDATE"/>
-                <a className='redirect' href="http://127.0.0.1:8000/register" to="/register">Back to Login</a>
+                {/* <a className='redirect' href="http://127.0.0.1:8000/register" to="/register">Back to Login</a> */}
+                <a className='redirect-restore' onClick={loginredirect}>Back to logging in</a>
             </div>
         </form>
     </div>

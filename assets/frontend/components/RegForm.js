@@ -1,10 +1,14 @@
 import React, {useState} from 'react'
 
-function RegForm({Register, error}) {
+function RegForm({Register, handleClick, error}) {
     const [details, setDetails] = useState({name: "", email: "", password:""});
     const submitHandler = e => {
         e.preventDefault();
         Register(details);
+    }
+    const loginredirect = e =>{
+        e.preventDefault();
+        handleClick();
     }
   return (
     <div className="App">
@@ -41,7 +45,7 @@ function RegForm({Register, error}) {
                 </div>
                 {(error !== "") ? (<div className='error'>{error}</div>) : ""} 
                 <input type="submit" value="SIGN UP"/>
-                <a className='redirect-password' href="http://localhost:3000/login" to="/register">I have an account</a>
+                <a className='redirect-password' onClick={loginredirect}>I have an account</a>
             </div>
         </form>
     </div>

@@ -127,21 +127,27 @@ function App() {
 
   return (
     <React.Fragment>
-      <button className='redirect' onClick={handleClick}>Toggle "Login"/"Register" view</button>
-      <button className='redirect' onClick={toggleViewRestore}>Toggle "Restore Password" view</button>
+      {/* <button className='redirect' onClick={handleClick}>Toggle "Login"/"Register" view</button> */}
+      {/* <button className='redirect' onClick={toggleViewRestore}>Toggle "Restore Password" view</button> */}
+      {/* <div className="form-inner">
+        <h2>You are currently logged in as </h2> {user.email}
+        </div> */}
+
+
       {
       (activeView ? (
-        <Restoration Restore={Restore} error={error}  />
+        <Restoration Restore={Restore} toggleRestore={toggleViewRestore} error={error}  />
       ) : (
         (isShown ? (
           (user.email !== "" ? (
-            window.location.href = "/"
+            // window.location.href = "/"
+            <LoginForm Login={Login} handleClick={handleClick} toggleRestore={toggleViewRestore} error={error}  />
           ) : (
-            <LoginForm Login={Login} error={error}  />
+            <LoginForm Login={Login} handleClick={handleClick} toggleRestore={toggleViewRestore} error={error}  />
           )
         )
         ) : (
-        <RegForm Register={Register} error={error} />
+        <RegForm Register={Register} handleClick={handleClick} error={error} />
         )
         )
       )
