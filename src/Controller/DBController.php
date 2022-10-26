@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
 use Exception;
 
+
 #[Route('/api/database', name: 'api_user')]
 class DBController extends AbstractController
 {
@@ -28,7 +29,7 @@ class DBController extends AbstractController
     public function index()
     {
         $users = $this->userRepository->findAll();
-
+        
         $userdatabase = [];
 
         foreach ($users as $user){
@@ -57,5 +58,22 @@ class DBController extends AbstractController
         return $exception;
       }
     //   return new Response($content->name);
+    }
+
+    #[Route('/update', name: 'api_user_update')]
+    public function update(Request $request)
+    {
+      $content = json_decode($request->getContent());
+      $modified_user = $this->userRepository->findBy(array('email'=>$content->email));
+      $modified_user[0]->setPassword($content->password);
+      try {
+        $this->entityManager->persist($modified_user[0]);
+        $this->entityManager->flush();
+        return new Response(200);
+
+      } catch (Exception $exception) {
+        echo $exception;
+        return $exception;
+      }
     }
 }

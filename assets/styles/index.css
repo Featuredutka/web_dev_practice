@@ -123,7 +123,7 @@ form a[class="redirect"] {
   transition: 0.4s;
   color: #666;
   cursor: pointer;
-  margin-left: 10px;
+  position: relative;
 }
 
 form a[class="redirect-password"] {
@@ -149,4 +149,16 @@ form .form-inner input[type="submit"] {
   color: #fff;
   font-weight: 700;
   cursor: pointer;
+}
+
+button[class="redirect"] {
+  /* display: inline-block; */
+  padding: 10px 15px;
+  border-radius: 8px;
+  background-size: 100%;
+  background-position: 0%;
+  transition: 0.4s;
+  color: #666;
+  cursor: pointer;
+  margin-left: 10px;
 }
