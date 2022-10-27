@@ -21,6 +21,7 @@ function App() {
 
   const [user, setUser] = useState({name: "", email: ""});
   const [error, setError] = useState("");
+  const [warning, setWarning] = useState("");
   const [isShown, setIsShown] = useState(false);
   const [activeView, setactiveView] = useState(false);
   
@@ -68,6 +69,7 @@ function App() {
           console.log(response);
           if (response.data.slice(0,12) === "PDOException"){
             setError("This email is already registered");
+            details.password="";
           }
         })
         .catch( error => {
@@ -86,22 +88,31 @@ function App() {
         } else {
             if (details.password !== details.confirm_password){
               setError("Passwords do not match");
+              details.password="";
+              details.confirm_password=""
             } else {
                 setError("");
                 const salt = bcryptjs.genSaltSync(saltRounds);
                 const hash = bcryptjs.hashSync(details.password, salt);
                 details.password = hash;
-                details.confirm_password = "";
+                
 
            // SENDING DATA INTO THE DATABASE -> THE LAST STEP
+           let generated = Math.floor((Math.random()*10000000)+12345678)
+           const new_hash = bcryptjs.hashSync(generated.toString(), salt);
+           details.confirm_password = new_hash;
+
            axios.put('api/database/update', details)
            .then(response => {
              console.log(response.data);
+             setWarning("Verification email sent");
            })
            .catch( error => {
              console.log(error);
              if (error.message.slice(-3) === "500"){
               setError("This email is not registered");
+              details.password="";
+              details.confirm_password=""
             }
            })
               }
@@ -123,11 +134,21 @@ function App() {
     setactiveView(current => !current);
     setError("");
   }
+  
+  const sendEmail = details => {
+    axios.post("api/database/mail_confirmation", { hello: 'world' })
+    .then(response => {
+      console.log(response.data);
+    })
+    .catch( error => {
+      console.log(error);
+     })
+  }
 
 
   return (
     <React.Fragment>
-      {/* <button className='redirect' onClick={handleClick}>Toggle "Login"/"Register" view</button> */}
+      {/* <button className='redirect' onClick={sendEmail}>SAMPLE EMAIL</button> */}
       {/* <button className='redirect' onClick={toggleViewRestore}>Toggle "Restore Password" view</button> */}
       {/* <div className="form-inner">
         <h2>You are currently logged in as </h2> {user.email}
@@ -136,12 +157,12 @@ function App() {
 
       {
       (activeView ? (
-        <Restoration Restore={Restore} toggleRestore={toggleViewRestore} error={error}  />
+        <Restoration Restore={Restore} toggleRestore={toggleViewRestore} warning={warning} error={error}  />
       ) : (
         (isShown ? (
           (user.email !== "" ? (
-            // window.location.href = "/"
-            <LoginForm Login={Login} handleClick={handleClick} toggleRestore={toggleViewRestore} error={error}  />
+            window.location.href = "/"
+            // <LoginForm Login={Login} handleClick={handleClick} toggleRestore={toggleViewRestore} error={error}  />
           ) : (
             <LoginForm Login={Login} handleClick={handleClick} toggleRestore={toggleViewRestore} error={error}  />
           )

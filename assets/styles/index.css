@@ -114,6 +114,17 @@ form div[class="error"] {
   max-width: 300px;
 }
 
+form div[class="warning"] {
+  color: #1ee114;
+  font-weight: 500;
+  padding: 10px;
+  margin-top: -15px;
+  text-align: center;
+  position: relative;
+  overflow-wrap: break-word;
+  max-width: 300px;
+}
+
 form a[class="redirect"] {
   /* display: inline-block; */
   padding: 10px 15px;
