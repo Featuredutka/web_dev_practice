@@ -1,8 +1,5 @@
 import React, {useState} from "react";
-import LoginForm from "./components/LoginForm";
-import RegForm from "./components/RegForm";
-import Home from "./components/Home";
-import Error from "./components/Error";
+
 
 
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom"

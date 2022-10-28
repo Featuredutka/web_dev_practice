@@ -1,7 +1,8 @@
 import React, {useState} from 'react'
 
-function RegForm({Register, handleClick, error}) {
+function RegForm({Register, handleClick, warning, error}) {
     const [details, setDetails] = useState({name: "", email: "", password:""});
+
     const submitHandler = e => {
         e.preventDefault();
         Register(details);
@@ -15,7 +16,6 @@ function RegForm({Register, handleClick, error}) {
         <form onSubmit={submitHandler}>
             <div className='form-inner'>
                 <h2>Register</h2>
-                
                 <div className='form-group'>
                     <label htmlFor='name'>Name:</label>
                     <input 
@@ -44,6 +44,7 @@ function RegForm({Register, handleClick, error}) {
                         value={details.password}/>
                 </div>
                 {(error !== "") ? (<div className='error'>{error}</div>) : ""} 
+                {(warning !== "") ? (<div className='warning'>{warning}</div>) : ""} 
                 <input type="submit" value="SIGN UP"/>
                 <a className='redirect-password' onClick={loginredirect}>I have an account</a>
             </div>

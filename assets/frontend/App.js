@@ -2,7 +2,7 @@ import React, {useState, setState, useEffect} from "react";
 import LoginForm from "./components/LoginForm";
 import RegForm from "./components/RegForm";
 import Restoration from "./components/Restoration";
-import Error from "./components/Error";
+import Main from "./components/Main";
 import axios from "axios"
 import bcryptjs from "bcryptjs"
 
@@ -11,13 +11,7 @@ import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
 
 function App() {
 
-  const adminUser = {
-    name: "Andrei Shingirii",
-    email: "admin@admin.com",
-    password:"password"
-  }
-
-  const saltRounds = 10;
+  const saltRounds = 10;  // Password hashing element
 
   const [user, setUser] = useState({name: "", email: ""});
   const [error, setError] = useState("");
@@ -27,14 +21,14 @@ function App() {
   
 
   const Login = details => {
-
     axios.get('api/database/read')
     .then(response => {
       try{
         let fetched_password = response.data.find(x => x.email === details.email).password;
-        if ((details.email === adminUser.email && details.password === adminUser.password) || (bcryptjs.compareSync(details.password, fetched_password))){
+        let username = response.data.find(x => x.email === details.email).name;
+        if (bcryptjs.compareSync(details.password, fetched_password)){
           setUser({
-            name: details.name,
+            name: username,
             email: details.email
           });
         } else {
@@ -50,7 +44,8 @@ function App() {
   }
  
   const Register = details => {
-
+    setWarning("");
+    setError("");
     if (details.name.length === 0 || details.email.length === 0 || details.password.length === 0){
       setError("Please fill all fields")
     } else {
@@ -63,14 +58,16 @@ function App() {
         const hash = bcryptjs.hashSync(details.password, salt);
         details.password = hash;
 
-        // SENDING DATA INTO THE DATABASE -> THE LAST STEP
+        // Sending data into the DB
         axios.post('api/database/create', details)
         .then(response => {
           console.log(response);
-          if (response.data.slice(0,12) === "PDOException"){
+          if (response.data !== 200){
             setError("This email is already registered");
-            details.password="";
+          } else {
+            setWarning("User successfully registered");
           }
+          details.password="";
         })
         .catch( error => {
           console.log(error);
@@ -80,6 +77,8 @@ function App() {
   } 
 
   const Restore = details => {
+    setWarning("");
+    setError("");
     if (details.confirm_password.length === 0 || details.email.length === 0 || details.password.length === 0){
       setError("Please fill all fields")
     } else {
@@ -96,8 +95,7 @@ function App() {
                 const hash = bcryptjs.hashSync(details.password, salt);
                 details.password = hash;
                 
-
-           // SENDING DATA INTO THE DATABASE -> THE LAST STEP
+           // Sending data into the DB
            let generated = Math.floor((Math.random()*10000000)+12345678)
            const new_hash = bcryptjs.hashSync(generated.toString(), salt);
            details.confirm_password = new_hash;
@@ -106,6 +104,8 @@ function App() {
            .then(response => {
              console.log(response.data);
              setWarning("Verification email sent");
+             details.password="";
+             details.confirm_password=""
            })
            .catch( error => {
              console.log(error);
@@ -122,7 +122,6 @@ function App() {
 
   const Logout = () => {
     setUser({name:"", email:""});
-
   }
 
   const handleClick = event => {
@@ -147,33 +146,23 @@ function App() {
 
 
   return (
-    <React.Fragment>
-      {/* <button className='redirect' onClick={sendEmail}>SAMPLE EMAIL</button> */}
-      {/* <button className='redirect' onClick={toggleViewRestore}>Toggle "Restore Password" view</button> */}
-      {/* <div className="form-inner">
-        <h2>You are currently logged in as </h2> {user.email}
-        </div> */}
-
-
-      {
+    <React.Fragment> {
       (activeView ? (
         <Restoration Restore={Restore} toggleRestore={toggleViewRestore} warning={warning} error={error}  />
       ) : (
         (isShown ? (
-          (user.email !== "" ? (
-            window.location.href = "/"
-            // <LoginForm Login={Login} handleClick={handleClick} toggleRestore={toggleViewRestore} error={error}  />
+          (user.name !== "" ? (
+            <Main Logout={Logout} user={user}/>
           ) : (
             <LoginForm Login={Login} handleClick={handleClick} toggleRestore={toggleViewRestore} error={error}  />
+            )
           )
-        )
         ) : (
-        <RegForm Register={Register} handleClick={handleClick} error={error} />
+        <RegForm Register={Register} handleClick={handleClick} warning={warning} error={error} />
         )
         )
       )
-      )
-      }
+      )}
      </React.Fragment>
   );
 }

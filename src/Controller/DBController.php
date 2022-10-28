@@ -45,21 +45,20 @@ class DBController extends AbstractController
     public function create(Request $request)
     {
       $content = json_decode($request->getContent());
-    //   echo $content->name;
+
       $user = new User();
       $user->setName($content->name);
       $user->setEmail($content->email);
       $user->setPassword($content->password);
+
       try {
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         return new Response(200);
 
       } catch (Exception $exception) {
-        echo $exception;
         return $exception;
       }
-    //   return new Response($content->name);
     }
 
     #[Route('/update', name: 'api_user_update')]
@@ -70,14 +69,58 @@ class DBController extends AbstractController
       $modified_user[0]->setPassword($content->confirm_password);
       
       $html = <<<HTMLBody
-      <h2>Password restoration</h2>
+      <!DOCTYPE html>
+      <html>
+      <head>
+      <style>
+          * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: montserrat, sans-serif;
+      }
 
-      You have requested a password restoration for $content->email
-      <br />
-      Here's a link to follow to complete the procedure:
-      <br />
-      <a href="http://127.0.0.1:8000/api/database/password_reset?newpass=$content->password&curpass=$content->confirm_password&user=$content->email">Click to update password</a>
-      
+      form a {
+        /* display: inline-block; */
+        /* padding: 10px 15px; */
+        border-radius: 8px;
+        background-size: 100%;
+        background-position: 0%;
+        transition: 0.4s;
+        color: #666;
+        cursor: pointer;
+        position: relative;
+        display:block;
+        text-align:center
+      }
+
+      text {
+          display:block;
+          text-align:center
+
+      }
+
+      h2 {
+          padding: 10px;
+          display:block;
+          text-align:center
+
+      }
+      </style>
+      </head>
+      <body>
+      <div className='form-inner'>
+      <form >
+      <h2>Password restoration</h2>
+            <text>You have requested a password restoration for $content->email</text>
+            <br />
+            <text>Here's a link to follow to complete the procedure:</text>
+            <br />
+            <a href="http://127.0.0.1:8000/api/database/password_reset?newpass=$content->password&curpass=$content->confirm_password&user=$content->email">Click to update password</a>
+      </form>
+      </div>
+      </body>
+      </html>
       HTMLBody;
 
       $email = (new Email())
@@ -95,8 +138,6 @@ class DBController extends AbstractController
         $this->entityManager->persist($modified_user[0]);
         $this->entityManager->flush();
         $mailer->send($email);
-
-
         return new Response(200);
 
       } catch (Exception $exception) {
@@ -105,7 +146,7 @@ class DBController extends AbstractController
       }
     }
 
-    #[Route('/mail_confirmation', name: 'api_user_send_mail')]
+    #[Route('/mail_confirmation', name: 'api_user_send_mail')]  // Reserved for another emails - otherwise deprecated
     public function send_mail(Request $request)
     {
       $content = json_decode($request->getContent());
@@ -147,12 +188,8 @@ class DBController extends AbstractController
     }
 
     #[Route('/password_reset', name: 'api_user_reset_password')]
-    public function update_password(Request $request)
+    public function update_password()
     {
-      // echo $_GET['newpass'], PHP_EOL;
-      // echo $_GET['curpass'], PHP_EOL;
-      // echo $_GET['user'], PHP_EOL;
-
       $user = $_GET['user'];
       $buffer_password = $_GET['curpass'];
       $new_password = $_GET['newpass'];
@@ -162,25 +199,17 @@ class DBController extends AbstractController
         $modified_user[0]->setPassword($new_password);
       } else {
         echo "ERROR - LINK WAS ALREADY USED OR ANOTHER ERROR OCCURED";
-        // echo $modified_user[0]->getPassword(), PHP_EOL;
-        // echo $buffer_password, PHP_EOL;
+        return "ERROR";
       }
       
       try { 
         $this->entityManager->persist($modified_user[0]);
         $this->entityManager->flush();
-        return new Response(200);
+        return new Response('OK');
 
       } catch (Exception $exception) {
         echo $exception;
         return $exception;
       }
-
-
-
-      return new Response();
-      
     }
-
-
 }

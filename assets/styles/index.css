@@ -172,17 +172,11 @@ form .form-inner a[class="redirect-restore"] {
   display:block;
   text-decoration-line: underline;
 }
-/* BULLSHIT PART
 
-button[class="redirect"] {
-  display: inline-block;
-  padding: 10px 15px;
-  border-radius: 8px;
-  background-size: 100%;
-  background-position: 0%;
-  transition: 0.4s;
-  color: #666;
-  cursor: pointer;
-  margin-left: 10px;
-} */
+h3 {
+  color: rgb(56, 28, 156);
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 30px;
+ }
 

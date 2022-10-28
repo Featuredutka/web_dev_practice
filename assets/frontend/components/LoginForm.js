@@ -39,7 +39,6 @@ function LoginForm({Login, handleClick, toggleRestore, error}) {
                         value={details.password}/>
                 </div>
                 {(error !== "") ? (<div className='error'>{error}</div>) : ""}
-                
                 <div>
                     <input type="submit" value="LOG IN"/>
                     {/* <input type="reset" value="I don't have an account"/> */}
