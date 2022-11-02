@@ -22,6 +22,9 @@ class User
     #[ORM\Column(length: 40)]
     private ?string $password = null;
 
+    #[ORM\Column(length: 60, nullable: true)]
+    private ?string $buffer_password = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +62,18 @@ class User
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getBufferPassword(): ?string
+    {
+        return $this->buffer_password;
+    }
+
+    public function setBufferPassword(?string $buffer_password): self
+    {
+        $this->buffer_password = $buffer_password;
 
         return $this;
     }

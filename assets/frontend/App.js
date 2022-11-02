@@ -16,14 +16,16 @@ function App() {
   const [user, setUser] = useState({name: "", email: ""});
   const [error, setError] = useState("");
   const [warning, setWarning] = useState("");
-  const [isShown, setIsShown] = useState(false);
+  const [isShown, setIsShown] = useState(true);
   const [activeView, setactiveView] = useState(false);
+  const [auth, setAuth] = useState(false);
   
-
+     
   const Login = details => {
     axios.get('api/database/read')
     .then(response => {
       try{
+        // console.log(response.data.slice(0, 5));
         let fetched_password = response.data.find(x => x.email === details.email).password;
         let username = response.data.find(x => x.email === details.email).name;
         if (bcryptjs.compareSync(details.password, fetched_password)){
@@ -31,6 +33,17 @@ function App() {
             name: username,
             email: details.email
           });
+          // AFTER A VALID LOGIN SET COOKIE FOR FASTER LOGIN
+
+          axios.post('api/database/set_credentials', details)
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error);
+          })
+
+
         } else {
           setError("Credentials do not match");
         }
@@ -144,15 +157,65 @@ function App() {
      })
   }
 
+  async function getcookie () {
+    axios.get('api/database/get_credentials')
+    .then(response => {
+      // console.log(response.data || null);
+      return response.data || null;
+    })
+    .catch(error => {
+      console.log(error);
+    })
+  }
 
-  return (
-    <React.Fragment> {
+  // const setcookie = details => {
+  //   axios.post('api/database/set_credentials', content)
+  //   .then(response => {
+  //     console.log(response);
+  //   })
+  //   .catch(error => {
+  //     console.log(error);
+  //   }) 
+  // }
+
+  async function check_cookie(){
+    if (await getcookie() === undefined || await getcookie() === null){
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  // NEED TO VALIDATE HASHED PASSWORD AFTER FETCHING IT FOR SECURITY REASONS
+
+  check_cookie().then(
+    response => {
+      console.log(response);
+    }
+  );
+
+  return (  //TODO remap the routing for adequate async handling 
+
+    <React.Fragment> 
+      {
       (activeView ? (
         <Restoration Restore={Restore} toggleRestore={toggleViewRestore} warning={warning} error={error}  />
       ) : (
         (isShown ? (
           (user.name !== "" ? (
             <Main Logout={Logout} user={user}/>
+          // ((check_cookie()
+          // .then(
+          //   response => {
+          //     console.log(response);
+          //     // return response;
+          //     console.log(response);
+          //     response ? (
+          //       <Main Logout={Logout} user={user}>  </Main>
+          //     ) : (
+          //       <LoginForm Login={Login} handleClick={handleClick} toggleRestore={toggleViewRestore} error={error}  />
+          //     )
+          //   })
           ) : (
             <LoginForm Login={Login} handleClick={handleClick} toggleRestore={toggleViewRestore} error={error}  />
             )

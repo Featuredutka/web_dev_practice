@@ -13,23 +13,26 @@ use Exception;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\HttpFoundation\Cookie;
 
 #[Route('/api/database', name: 'api_user')]
 class DBController extends AbstractController
 {
     private $entityManager;
     private $userRepository;
+    
 
     public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository)
     {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
+
     }
 
 
     #[Route('/read', name: 'api_user_read')]
     public function index()
-    {
+    {   
         $users = $this->userRepository->findAll();
         
         $userdatabase = [];
@@ -37,6 +40,7 @@ class DBController extends AbstractController
         foreach ($users as $user){
             $userdatabase[] = $user->toArray();
         }
+        
         return $this->json($userdatabase);
 
     }
@@ -66,7 +70,7 @@ class DBController extends AbstractController
     {
       $content = json_decode($request->getContent());
       $modified_user = $this->userRepository->findBy(array('email'=>$content->email));
-      $modified_user[0]->setPassword($content->confirm_password);
+      $modified_user[0]->setBufferPassword($content->confirm_password);
       
       $html = <<<HTMLBody
       <!DOCTYPE html>
@@ -195,7 +199,7 @@ class DBController extends AbstractController
       $new_password = $_GET['newpass'];
 
       $modified_user = $this->userRepository->findBy(array('email'=>$user));
-      if ($modified_user[0]->getPassword() === $buffer_password){
+      if ($modified_user[0]->getBufferPassword() === $buffer_password){
         $modified_user[0]->setPassword($new_password);
       } else {
         echo "ERROR - LINK WAS ALREADY USED OR ANOTHER ERROR OCCURED";
@@ -212,4 +216,24 @@ class DBController extends AbstractController
         return $exception;
       }
     }
+
+    #[Route('/get_credentials', name: 'api_user_get_credentials')]
+    public function fetch_cookie(){
+      if(isset($_COOKIE['user'])){
+        return new Response($_COOKIE['user']);
+      } else {
+        return new Response(False);
+      }
+    }
+
+    #[Route('/set_credentials', name: 'api_user_set_credentials')]
+    public function set_cookie(Request $request){
+      $content = json_decode($request->getContent());
+      $info = array(
+          "email" => $content->email,
+          "password" => $content->password
+        );
+        setcookie("user", json_encode($info), strtotime('tomorrow'));
+    }
+
 }
