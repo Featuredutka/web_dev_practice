@@ -31,7 +31,7 @@ function App() {
             email: details.email
           });
           setAuth(true);
-          // AFTER A VALID LOGIN SET COOKIE FOR FASTER LOGIN
+          // Set a cookie for a faster login after  
           details.password = fetched_password;
           details.name = username;
           axios.post('api/database/set_credentials', details)
@@ -154,20 +154,18 @@ function App() {
     axios.get('api/database/get_credentials')
     .then(data_from_kuki => {
       
-      // Fetch password from the cookie
+      // Fetch password from cookie
       let fetched_password = data_from_kuki.data.password;
       
-      // Check whether password is correct
+      // Check password with one that is written into the DB
       axios.get('api/database/read')
       .then(response => {
-        console.log(response.data[0].password.length);
-        console.log(fetched_password.length);
-
-        if(response.data[0].password === fetched_password){
+        let checkpass = response.data.find(x => x.email === data_from_kuki.data.email).password;
+        console.log(checkpass === fetched_password);
+        if(checkpass === fetched_password){
           setUser({
             name: data_from_kuki.data.name,
             email: data_from_kuki.data.email,
-
         })
           setAuth(true);
           // console.log("cookie passwords match");
@@ -182,12 +180,11 @@ function App() {
     })
   }
 
-  // If not authenticated check if it can be done automatically
   if (!auth){
     getcookie();
   }
-  
-  return (  //TODO remap the routing for adequate async handling 
+
+  return ( 
 
     <React.Fragment> 
       {
