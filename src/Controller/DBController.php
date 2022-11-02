@@ -26,7 +26,6 @@ class DBController extends AbstractController
     {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
-
     }
 
 
@@ -34,15 +33,11 @@ class DBController extends AbstractController
     public function index()
     {   
         $users = $this->userRepository->findAll();
-        
         $userdatabase = [];
-
         foreach ($users as $user){
             $userdatabase[] = $user->toArray();
         }
-        
         return $this->json($userdatabase);
-
     }
 
     #[Route('/create', name: 'api_user_create')]

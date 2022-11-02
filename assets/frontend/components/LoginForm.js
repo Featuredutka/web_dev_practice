@@ -41,10 +41,8 @@ function LoginForm({Login, handleClick, toggleRestore, error}) {
                 {(error !== "") ? (<div className='error'>{error}</div>) : ""}
                 <div>
                     <input type="submit" value="LOG IN"/>
-                    {/* <input type="reset" value="I don't have an account"/> */}
                     <a className='redirect' onClick={registerredirect}>I don't have an account</a>
                     <a className='redirect-restore' onClick={restoreredirect}>I forgot my password</a>
-                    {/* <button type='test' color="red" onClick={toggleViewRestore} text="Call Component"/>  */}
                     </div>
             </div>
         </form>

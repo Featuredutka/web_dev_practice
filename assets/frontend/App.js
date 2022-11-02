@@ -6,9 +6,6 @@ import Main from "./components/Main";
 import axios from "axios"
 import bcryptjs from "bcryptjs"
 
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
-
-
 function App() {
 
   const saltRounds = 10;  // Password hashing element
@@ -23,16 +20,9 @@ function App() {
      
   const Login = details => {
 
-    // check_cookie().then(
-    //   response => {
-    //     console.log(response);
-    //   }
-    // );
-
     axios.get('api/database/read')
     .then(response => {
       try{
-        // console.log(response.data.slice(0, 5));
         let fetched_password = response.data.find(x => x.email === details.email).password;
         let username = response.data.find(x => x.email === details.email).name;
         if (bcryptjs.compareSync(details.password, fetched_password)){
@@ -51,8 +41,6 @@ function App() {
           .catch(error => {
             console.log(error);
           })
-
-
         } else {
           setError("Credentials do not match");
         }
@@ -143,8 +131,6 @@ function App() {
   }
 
   const Logout = () => {
-    // setUser({name:"", email:""});
-    
     axios.get('api/database/erase_credentials')
     .then(response => {
       console.log(response);
@@ -163,33 +149,20 @@ function App() {
     setactiveView(current => !current);
     setError("");
   }
-  
-  const sendEmail = details => {
-    axios.post("api/database/mail_confirmation", { hello: 'world' })
-    .then(response => {
-      console.log(response.data);
-    })
-    .catch( error => {
-      console.log(error);
-     })
-  }
 
   async function getcookie () {
     axios.get('api/database/get_credentials')
     .then(data_from_kuki => {
       
-      // FETCH PASSWORD
+      // Fetch password from the cookie
       let fetched_password = data_from_kuki.data.password;
-      // console.log(fetched_password);
       
-      // CHECK PASSWORD
-      // IF PASSWORD IS CORRECT THEN AUTH AUTOMATICALLY - ELSE SET AUTH - FALSE
+      // Check whether password is correct
       axios.get('api/database/read')
       .then(response => {
         console.log(response.data[0].password.length);
         console.log(fetched_password.length);
 
-        // let fetched_password = data_from_kuki.data.find(x => x.email === data_from_kuki.email).password;
         if(response.data[0].password === fetched_password){
           setUser({
             name: data_from_kuki.data.name,
@@ -197,50 +170,23 @@ function App() {
 
         })
           setAuth(true);
-          console.log("cookie passwords match");
+          // console.log("cookie passwords match");
 
         } else {
           // console.log("cookie passwords do not match");
         }
       })
-      // console.log(data_from_kuki.data.password || null);
     })
     .catch(error => {
       console.log(error);
     })
   }
 
-  // const setcookie = details => {
-  //   axios.post('api/database/set_credentials', content)
-  //   .then(response => {
-  //     console.log(response);
-  //   })
-  //   .catch(error => {
-  //     console.log(error);
-  //   }) 
-  // }
-
-  // async function check_cookie(){
-  //   // getcookie();
-  //   let test = await getcookie();
-  //   console.log(test);
-  
-    // if (await getcookie() === undefined || null){
-    //   return false;
-    // } else {
-    //   return true;
-    // }
-  // }
-
-  // NEED TO VALIDATE HASHED PASSWORD AFTER FETCHING IT FOR SECURITY REASONS
+  // If not authenticated check if it can be done automatically
   if (!auth){
     getcookie();
   }
   
-  // console.log()
-
-
-
   return (  //TODO remap the routing for adequate async handling 
 
     <React.Fragment> 
@@ -251,18 +197,6 @@ function App() {
         (isShown ? (
           (auth ? (
             <Main Logout={Logout} user={user}/>
-          // ((check_cookie()
-          // .then(
-          //   response => {
-          //     console.log(response);
-          //     // return response;
-          //     console.log(response);
-          //     response ? (
-          //       <Main Logout={Logout} user={user}>  </Main>
-          //     ) : (
-          //       <LoginForm Login={Login} handleClick={handleClick} toggleRestore={toggleViewRestore} error={error}  />
-          //     )
-          //   })
           ) : (
             <LoginForm Login={Login} handleClick={handleClick} toggleRestore={toggleViewRestore} error={error}  />
             )
