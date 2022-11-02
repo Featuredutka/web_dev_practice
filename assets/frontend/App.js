@@ -22,6 +22,13 @@ function App() {
   
      
   const Login = details => {
+
+    // check_cookie().then(
+    //   response => {
+    //     console.log(response);
+    //   }
+    // );
+
     axios.get('api/database/read')
     .then(response => {
       try{
@@ -33,8 +40,10 @@ function App() {
             name: username,
             email: details.email
           });
+          setAuth(true);
           // AFTER A VALID LOGIN SET COOKIE FOR FASTER LOGIN
-
+          details.password = fetched_password;
+          details.name = username;
           axios.post('api/database/set_credentials', details)
           .then(response => {
             console.log(response);
@@ -134,7 +143,15 @@ function App() {
   }
 
   const Logout = () => {
-    setUser({name:"", email:""});
+    // setUser({name:"", email:""});
+    
+    axios.get('api/database/erase_credentials')
+    .then(response => {
+      console.log(response);
+      setAuth(false);
+    }
+    );
+
   }
 
   const handleClick = event => {
@@ -159,9 +176,34 @@ function App() {
 
   async function getcookie () {
     axios.get('api/database/get_credentials')
-    .then(response => {
-      // console.log(response.data || null);
-      return response.data || null;
+    .then(data_from_kuki => {
+      
+      // FETCH PASSWORD
+      let fetched_password = data_from_kuki.data.password;
+      // console.log(fetched_password);
+      
+      // CHECK PASSWORD
+      // IF PASSWORD IS CORRECT THEN AUTH AUTOMATICALLY - ELSE SET AUTH - FALSE
+      axios.get('api/database/read')
+      .then(response => {
+        console.log(response.data[0].password.length);
+        console.log(fetched_password.length);
+
+        // let fetched_password = data_from_kuki.data.find(x => x.email === data_from_kuki.email).password;
+        if(response.data[0].password === fetched_password){
+          setUser({
+            name: data_from_kuki.data.name,
+            email: data_from_kuki.data.email,
+
+        })
+          setAuth(true);
+          console.log("cookie passwords match");
+
+        } else {
+          // console.log("cookie passwords do not match");
+        }
+      })
+      // console.log(data_from_kuki.data.password || null);
     })
     .catch(error => {
       console.log(error);
@@ -178,21 +220,26 @@ function App() {
   //   }) 
   // }
 
-  async function check_cookie(){
-    if (await getcookie() === undefined || await getcookie() === null){
-      return false;
-    } else {
-      return true;
-    }
-  }
+  // async function check_cookie(){
+  //   // getcookie();
+  //   let test = await getcookie();
+  //   console.log(test);
+  
+    // if (await getcookie() === undefined || null){
+    //   return false;
+    // } else {
+    //   return true;
+    // }
+  // }
 
   // NEED TO VALIDATE HASHED PASSWORD AFTER FETCHING IT FOR SECURITY REASONS
+  if (!auth){
+    getcookie();
+  }
+  
+  // console.log()
 
-  check_cookie().then(
-    response => {
-      console.log(response);
-    }
-  );
+
 
   return (  //TODO remap the routing for adequate async handling 
 
@@ -202,7 +249,7 @@ function App() {
         <Restoration Restore={Restore} toggleRestore={toggleViewRestore} warning={warning} error={error}  />
       ) : (
         (isShown ? (
-          (user.name !== "" ? (
+          (auth ? (
             <Main Logout={Logout} user={user}/>
           // ((check_cookie()
           // .then(

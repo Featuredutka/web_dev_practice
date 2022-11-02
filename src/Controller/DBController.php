@@ -230,10 +230,18 @@ class DBController extends AbstractController
     public function set_cookie(Request $request){
       $content = json_decode($request->getContent());
       $info = array(
+          "name" => $content->name,
           "email" => $content->email,
           "password" => $content->password
         );
         setcookie("user", json_encode($info), strtotime('tomorrow'));
+        return new Response("Success");
     }
+
+    #[Route('/erase_credentials', name: 'api_user_erase_credentials')]
+    public function clear_cookie(){
+    setcookie("user", time() - 3600);
+    return new Response("Success");
+  }
 
 }
